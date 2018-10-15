@@ -82,7 +82,8 @@ app.get('/sort-players', (req, res) => {
 
   const order = req.query.order? req.query.order: 'desc'
 
-  return res.json({data: quickSort(players, sortBy, order)})
+  return res.json({data: mergeSort(players, sortBy, order)})
+  // return res.json({data: quickSort(players, sortBy, order)})
 
   function quickSort(players, sortBy, order) {
     if(players.length < 2) {
