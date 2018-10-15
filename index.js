@@ -74,7 +74,58 @@ const players = [
   }
 ]
 
-// pitchers.sort((a, b) => b.salary - a.salary)
+// players.sort((a, b) => b.salary - a.salary)
+
+
+app.get('/sort-players', (req, res) => {
+  const sortBy = req.query.sort? req.query.sort : 'salary'
+
+  const order = req.query.order? req.query.order: 'desc'
+
+  return res.json({data: quickSort(players, sortBy, order)})
+
+  function quickSort(players, sortBy, order) {
+    if(players.length < 2) {
+      return players;
+    }
+    const pivot = players[0]
+    const lesser = []
+    const greater = []
+  
+    for (let i = 1; i < players.length - 1; i++) {
+      players[i][sortBy] > pivot[sortBy] ? greater.push(players[i]) : lesser.push(players[i])
+    }
+    if (order == 'desc') {
+      return quickSort(greater, sortBy, order).concat(pivot, quickSort(lesser, sortBy, order))  
+    }
+
+    return quickSort(lesser, sortBy, order).concat(pivot, quickSort(greater, sortBy, order))
+  }
+
+  function mergeSort(array, sortBy) {
+    if(array.length < 2) {
+      return array;
+    }
+  
+    const middle = Math.floor(array.length / 2);
+    const left = array.slice(0, middle);
+    const right = array.slice(middle);
+  
+    return mergeTopDown(mergeSort(left, sortBy), mergeSort(right, sortBy), sortBy);
+  }
+  function mergeTopDown(left, right, sortBy) {
+    var array = [];
+  
+    while(left.length && right.length) {
+      if(left[0][sortBy] < right[0][sortBy]) {
+        array.push(left.shift());
+      } else {
+        array.push(right.shift());
+      }
+    }
+    return array.concat(left.concat(right));
+  }
+})
 
 app.post('/add-player', (req, res) => {
   if (roster.players[req.body.id]) {
