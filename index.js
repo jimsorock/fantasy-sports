@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 const roster = {
   remSalary: 50000,
-  players: {}
+  players: new Map()
 }
 
 const players = [
@@ -74,25 +74,28 @@ const players = [
   }
 ]
 
-// pitchers.sort((a, b) => b.salary - a.salary)
+// players.sort((a, b) => b.salary - a.salary)
 
 app.post('/add-player', (req, res) => {
-  if (roster.players[req.body.id]) {
+  if (roster.players.has(req.body.id)) {
     return res.json({data:'player already on team'})
   }
-  const playerToAdd = players.filter((player) => {
+  const playerToAdd = players.find((player) => {
     return player.id == req.body.id
   })
-  if (playerToAdd.length) {
-    if (roster.remSalary - playerToAdd[0].salary < 0) {
-      return res.json({data:'Not enough salary'})  
-    }
-    roster.players[req.body.id] = playerToAdd[0]
-    roster.remSalary = roster.remSalary - playerToAdd[0].salary
-  } else {
+  if (!playerToAdd) {
     return res.json({data:'player not found.'})
   }
-  return res.json({data:roster})
+  if (roster.remSalary - playerToAdd.salary < 0) {
+    return res.json({data:'Not enough salary'})  
+  }
+  roster.players.set(req.body.id, playerToAdd)
+  roster.remSalary = roster.remSalary - playerToAdd.salary
+  
+  return res.json({data:{
+    remSalary: roster.remSalary,
+    players: Array.from(roster.players.values())
+  }})
 })
 
 app.listen(8080, () => {
