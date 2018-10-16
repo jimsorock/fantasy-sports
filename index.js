@@ -75,10 +75,6 @@ const players = [
 ]
 
 // players.sort((a, b) => b.salary - a.salary)
-<<<<<<< HEAD
-=======
-
-
 app.get('/sort-players', (req, res) => {
   const sortBy = req.query.sort? req.query.sort : 'salary'
 
@@ -116,6 +112,7 @@ app.get('/sort-players', (req, res) => {
   
     return mergeTopDown(mergeSort(left, sortBy), mergeSort(right, sortBy), sortBy);
   }
+  
   function mergeTopDown(left, right, sortBy) {
     var array = [];
   
@@ -129,7 +126,6 @@ app.get('/sort-players', (req, res) => {
     return array.concat(left.concat(right));
   }
 })
->>>>>>> 68231c49743bb6d5dae5a5eedce0935bdb43df21
 
 app.post('/add-player', (req, res) => {
   if (roster.players.has(req.body.id)) {
